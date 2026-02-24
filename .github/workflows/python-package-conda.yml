@@ -1,0 +1,34 @@
+名称: 使用Conda的Python软件包
+
+在: [推送]
+
+作业:
+构建-linux:
+运行于: ubuntu-latest
+策略:
+最大并行: 5
+
+步骤:
+    - 使用: actions/checkout@v4
+    - 名称: 设置Python 3.10
+使用: actions/setup-python@v3
+与:
+Python版本: '3.10'
+    - 名称: 将Conda添加到系统路径
+运行: |
+# $CONDA 是一个指向 miniconda 目录根目录的环境变量
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: 安装依赖项
+运行: |
+        conda env update --file environment.yml --name base
+    - 名称: 使用flake8进行静态检查
+运行: |
+        conda install flake8
+如果存在 Python 语法错误或未定义的名称，则停止构建
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+# exit-zero 将所有错误视为警告。GitHub 编辑器宽度为 127 个字符
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - 名称: 使用pytest进行测试
+运行: |
+conda 安装 pytest
+        pytest
